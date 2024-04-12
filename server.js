@@ -16,9 +16,12 @@ app.use(cors());
 app.use(cookieParser());
 
 // Define a route
-app.get('/', (req, res) => {
-  res.json({ msg: 'Hello from Voxly' });
-});
+// app.get('/', (req, res) => {
+//   res.json({ msg: 'Hello from Voxly' });
+// });
+
+//Routes
+app.use('/api', require('./routes/authRouter'));
 
 // MongoDB URI from environment variables
 const URI = process.env.MONGODB_URL;
