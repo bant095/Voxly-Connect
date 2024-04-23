@@ -2,9 +2,9 @@ import { GLOBALTYPES } from './globalTypes';
 import { postDataAPI } from '../../utils/fetchData';
 import valid from '..//../utils/valid';
 
-// export const TYPES = {
-//   AUTH: 'AUTH',
-// };
+export const TYPES = {
+  AUTH: 'AUTH',
+};
 
 // LOGIN
 export const login = (data) => async (dispatch) => {
@@ -67,6 +67,8 @@ export const refreshToken = () => async (dispatch) => {
   }
 };
 
+export default refreshToken;
+
 //  REGISTER
 export const register = (data) => async (dispatch) => {
   const check = valid(data);
@@ -77,7 +79,7 @@ export const register = (data) => async (dispatch) => {
     dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
 
     const res = await postDataAPI('register', data);
-    console.log(res);
+    // console.log(res);
     dispatch({
       type: GLOBALTYPES.AUTH,
       payload: {
@@ -104,4 +106,16 @@ export const register = (data) => async (dispatch) => {
   }
 };
 
-export default refreshToken;
+// LogOut
+export const logout = () => async (dispatch) => {
+  try {
+    localStorage.removeItem('firstLogin');
+    await postDataAPI('logout');
+    window.location.href = '/';
+  } catch (err) {
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: { error: err.response.data.msg },
+    });
+  }
+};

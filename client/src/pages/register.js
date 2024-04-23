@@ -18,7 +18,7 @@ const Register = () => {
   };
   const [userData, setUserData] = useState(initialState);
 
-  const { fullname, username, email, password, cf_password, gender } = userData;
+  const { fullname, username, email, password, cf_password } = userData;
 
   //state for password
   const [typePass, setTypePass] = useState(false);
@@ -26,7 +26,7 @@ const Register = () => {
   const [typeCfPass, setTypeCfPass] = useState(false);
 
   useEffect(() => {
-    if (auth.token) navigate.push('/');
+    if (auth.token) navigate('/');
   }, [auth.token, navigate]);
 
   //handlechange input
@@ -41,9 +41,6 @@ const Register = () => {
     // verification of authAction
     dispatch(register(userData));
   };
-
-  // const navigate = useNavigate();
-  // navigate('/home');
 
   return (
     <div className='auth_page'>
@@ -167,7 +164,7 @@ const Register = () => {
               id='male'
               name='gender'
               value='male'
-              defaultChecked={handleChangeInput}
+              onChange={handleChangeInput}
             />
           </label>
 
@@ -178,7 +175,7 @@ const Register = () => {
               id='female'
               name='gender'
               value='female'
-              defaultChecked={handleChangeInput}
+              onChange={handleChangeInput}
             />
           </label>
 
@@ -189,7 +186,7 @@ const Register = () => {
               id='other'
               name='gender'
               value='other'
-              defaultChecked={handleChangeInput}
+              onChange={handleChangeInput}
             />
           </label>
         </div>
@@ -200,7 +197,7 @@ const Register = () => {
         </button>
         <p className='my-2'>
           Already have an account?
-          <Link to='/login' className='pl-2' style={{ color: 'crimson' }}>
+          <Link to='/' className='pl-2' style={{ color: 'crimson' }}>
             Login
           </Link>
         </p>

@@ -1,33 +1,41 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../redux/actions/authAction';
-import { useDispatch } from 'react-redux';
-// import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 
 const Login = () => {
+  const { auth, alert } = useSelector((state) => state);
   const initialState = { email: '', password: '' };
   const [userData, setUserData] = useState(initialState);
+  const navigate = useNavigate();
   const { email, password } = userData;
 
-  //state
-  const [typePass, setTypePass] = useState(false);
+  // State to toggle password visibility
+  const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useDispatch();
 
-  //handlechange input
+  useEffect(() => {
+    // Check if auth token exists and navigate to home page if authenticated
+    if (auth.token) {
+      // console.log('Navigating to home page...');
+      navigate('/');
+    }
+  }, [auth.token, navigate]); // Ensure useEffect triggers on auth.token or navigate change
+
+  // Handle input changes
   const handleChangeInput = (e) => {
     const { name, value } = e.target;
     setUserData({ ...userData, [name]: value });
   };
 
-  //handleSubmit
+  // Handle form submission (login)
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(login(userData));
   };
 
-  // const navigate = useNavigate();
-  // navigate('/home');
+  // console.log('Auth state:', auth); // Log auth state for debugging
 
   return (
     <div className='auth_page'>
@@ -44,24 +52,27 @@ const Login = () => {
             onChange={handleChangeInput}
             name='email'
             value={email}
+            style={{ background: `${alert.email ? '#fd2d6a14' : ''}` }}
           />
-          <small id='emailHelp' className='form-text text-muted'>
-            We'll never share your email with anyone else.
+          <small className='form-text text-danger'>
+            {alert.email ? alert.email : ''}
           </small>
         </div>
+
         <div className='form-group'>
           <label htmlFor='exampleInputPassword1'>Password</label>
           <div className='pass'>
             <input
-              type={typePass ? 'text' : 'password'}
+              type={showPassword ? 'text' : 'password'}
               className='form-control'
               id='exampleInputPassword1'
               onChange={handleChangeInput}
               name='password'
               value={password}
+              style={{ background: `${alert.password ? '#fd2d6a14' : ''}` }}
             />
-            <small onClick={() => setTypePass(!typePass)}>
-              {typePass ? 'Hide' : 'Show'}
+            <small onClick={() => setShowPassword(!showPassword)}>
+              {showPassword ? 'Hide' : 'Show'}
             </small>
           </div>
         </div>
@@ -70,9 +81,6 @@ const Login = () => {
           type='submit'
           className='btn btn-dark w-100'
           disabled={email && password ? false : true}
-          // onClick={() => {
-          //   navigate('/home');
-          // }}
         >
           Login
         </button>

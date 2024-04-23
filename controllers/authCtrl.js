@@ -5,33 +5,17 @@ const jwt = require('jsonwebtoken');
 const authCtrl = {
   //register
   register: async (req, res) => {
-    //token
-    const access_token = createAccessToken({ id: newUser._id });
-    const refresh_token = createRefreshToken({ id: newUser._id });
-
-    //   console.log({ access_token, refresh_token });
-
-    //res cookie
-    res.cookie('refreshtoken', refresh_token, {
-      httpOnly: true,
-      path: '/api/refresh_token',
-      maxAge: 30 * 24 * 60 * 60 * 1000, //30 days
-    });
-
     try {
       const { fullname, username, email, password, gender } = req.body;
-      //   console.log(req.body);
-
       let newUserName = username.toLowerCase().replace(/ /g, '');
-      //   console.log(newUserName);
 
       const user_name = await Users.findOne({ username: newUserName });
       if (user_name)
-        return res.status(400).json({ msg: 'This user name already exist' });
+        return res.status(400).json({ msg: 'This user name already exists.' });
 
       const user_email = await Users.findOne({ email });
       if (user_email)
-        return res.status(400).json({ msg: 'This user email already exist' });
+        return res.status(400).json({ msg: 'This email already exists.' });
 
       if (password.length < 6)
         return res
@@ -39,9 +23,7 @@ const authCtrl = {
           .json({ msg: 'Password must be at least 6 characters.' });
 
       const passwordHash = await bcrypt.hash(password, 12);
-      //   console.log(passwordHash);
 
-      //new user
       const newUser = new Users({
         fullname,
         username: newUserName,
@@ -50,13 +32,20 @@ const authCtrl = {
         gender,
       });
 
-      //   console.log(newUser);
+      const access_token = createAccessToken({ id: newUser._id });
+      const refresh_token = createRefreshToken({ id: newUser._id });
+
+      res.cookie('refreshtoken', refresh_token, {
+        httpOnly: true,
+        path: '/api/refresh_token',
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30days
+      });
 
       await newUser.save();
 
-      //success message
       res.json({
         msg: 'Register Success!',
+        access_token,
         user: {
           ...newUser._doc,
           password: '',
@@ -77,7 +66,7 @@ const authCtrl = {
         '-password'
       );
       if (!user)
-        return res.status(400).json({ msg: 'This email does not exist' });
+        return res.status(400).json({ msg: 'This email does not exist.' });
 
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch)
@@ -99,6 +88,7 @@ const authCtrl = {
       //success message
       res.json({
         msg: 'Login Success!',
+        access_token,
         user: {
           ...user._doc,
           password: '',
@@ -147,7 +137,7 @@ const authCtrl = {
           });
         }
       );
-      res.json({ rf_token });
+      // res.json({ rf_token });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
