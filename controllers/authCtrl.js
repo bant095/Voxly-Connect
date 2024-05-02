@@ -76,7 +76,7 @@ const authCtrl = {
       const access_token = createAccessToken({ id: user._id });
       const refresh_token = createRefreshToken({ id: user._id });
 
-      //   console.log({ access_token, refresh_token });
+      console.log({ access_token, refresh_token });
 
       //res cookie
       res.cookie('refreshtoken', refresh_token, {

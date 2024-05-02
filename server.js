@@ -22,6 +22,7 @@ app.get('/', (req, res) => {
 
 //Routes
 app.use('/api', require('./routes/authRouter'));
+app.use('/api', require('./routes/userRouter'));
 
 // MongoDB URI from environment variables
 const URI = process.env.MONGODB_URL;

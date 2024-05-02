@@ -1,10 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../redux/actions/authAction';
 import { useSelector, useDispatch } from 'react-redux';
+import { createSelector } from 'reselect';
 
 const Login = () => {
-  const { auth, alert } = useSelector((state) => state);
+  const selectAuthAndAlert = (state) => ({
+    auth: state.auth,
+    alert: state.alert,
+  });
+
+  const { auth, alert } = useSelector(
+    useMemo(() => selectAuthAndAlert, []),
+    (state) => [state.auth, state.alert]
+  );
+
   const initialState = { email: '', password: '' };
   const [userData, setUserData] = useState(initialState);
   const navigate = useNavigate();
